@@ -1,0 +1,54 @@
+{
+    "sd": [
+        "asum", "axpy", "cabs1", "copy", "dot", "gbmv", "gemm", "gemv", "ger", "nrm2", "rot", "rotg",
+        "rotm", "rotmg", "sbmv", "scal", "spmv", "spr2", "spr", "swap", "symm", "symv", "syr2", "syr2k", "syr", "syrk", "tbmv",
+        "tbsv", "tpmv", "tpsv", "trmm", "trmv", "trsm", "trsv",
+
+        "bdsdc", "bdsqr", "disna", "gbbrd", "gbcon", "gbequ", "gbequb", "gbrfs", "gbrfsx", "gbsv", "gbsvx", "gbsvxx",
+        "gbtrf", "gbtrs", "gebak", "gebal", "gebrd", "gecon", "geequ", "geequb", "gees", "geesx", "geev", "geevx", "gehrd",
+        "gejsv", "gelqf", "gels", "gelsd", "gelss", "gelsy", "geqlf", "geqp3", "geqrf", "geqrfp", "gerfs", "gerfsx",
+        "gerqf", "gesdd", "gesv", "gesvd", "gesvj", "gesvx", "gesvxx", "getrf", "getri", "getrs", "ggbak", "ggbal", "gges",
+        "ggesx", "ggev", "ggevx", "ggglm", "gghrd", "gglse", "ggqrf", "ggrqf", "gtcon", "gtrfs", "gtsv",
+        "gtsvx", "gttrf", "gttrs", "hgeqz", "hsein", "hseqr", "opgtr", "opmtr", "orgbr", "orghr", "orglq", "orgql", "orgqr",
+        "orgrq", "orgtr", "ormbr", "ormhr", "ormlq", "ormql", "ormqr", "ormrq", "ormrz", "ormtr", "pbcon", "pbequ",
+        "pbrfs", "pbstf", "pbsv", "pbsvx", "pbtrf", "pbtrs", "pftrf", "pftri", "pftrs", "pocon", "poequ", "poequb", "porfs",
+        "porfsx", "posv", "posvx", "posvxx", "potrf", "potri", "potrs", "ppcon", "ppequ", "pprfs", "ppsv", "ppsvx", "pptrf",
+        "pptri", "pptrs", "pstrf", "ptcon", "pteqr", "ptrfs", "ptsv", "ptsvx", "pttrf", "pttrs", "sbev", "sbevd", "sbevx", "sbgst",
+        "sbgv", "sbgvd", "sbgvx", "sbtrd", "sfrk", "spcon", "spev", "spevd", "spevx", "spgst", "spgv", "spgvd", "spgvx",
+        "sprfs", "spsv", "spsvx", "sptrd", "sptrf", "sptri", "sptrs", "stebz", "stedc", "stegr", "stein", "stemr", "steqr", "sterf",
+        "stev", "stevd", "stevr", "stevx", "sycon", "syequb", "syev", "syevd", "syevr", "syevx", "sygst", "sygv", "sygvd",
+        "sygvx", "syrfs", "syrfsx", "sysv", "sysvx", "sysvxx", "sytrd", "sytrf", "sytri", "sytrs", "tbcon", "tbrfs", "tbtrs", "tfsm",
+        "tftri", "tfttp", "tfttr", "tgevc", "tgexc", "tgsen", "tgsja", "tgsna", "tgsyl", "tpcon", "tprfs", "tptri", "tptrs", "tpttf",
+        "tpttr", "trcon", "trevc", "trexc", "trrfs", "trsen", "trsna", "trsyl", "trtri", "trtrs", "trttf", "trttp", "tzrzf"
+    ],
+    "cz": [
+        "axpy", "copy", "dotc", "dotu", "gbmv", "gemm", "gemv", "gerc", "geru", "hbmv", "hemm", "hemv", "her2", "her2k", "her",
+        "herk", "hpmv", "hpr2", "hpr", "rotg", "scal", "swap", "symm", "syr2k", "syrk", "tbmv", "tbsv", "tpmv",
+        "tpsv", "trmm", "trmv", "trsm", "trsv",
+
+        "bdsqr", "gbbrd", "gbcon", "gbequ", "gbequb", "gbrfs", "gbrfsx", "gbsv", "gbsvx", "gbsvxx", "gbtrf", "gbtrs",
+        "gebak", "gebal", "gebrd", "gecon", "geequ", "geequb", "gees", "geesx", "geev", "geevx", "gehrd", "gelqf", "gels",
+        "gelsd", "gelss", "gelsy", "geqlf", "geqp3", "geqrf", "geqrfp", "gerfs", "gerfsx", "gerqf", "gesdd", "gesv",
+        "gesvd", "gesvx", "gesvxx", "getrf", "getri", "getrs", "ggbak", "ggbal", "gges", "ggesx", "ggev", "ggevx", "ggglm",
+        "gghrd", "gglse", "ggqrf", "ggrqf", "gtcon", "gtrfs", "gtsv", "gtsvx", "gttrf", "gttrs", "hbev",
+        "hbevd", "hbevx", "hbgst", "hbgv", "hbgvd", "hbgvx", "hbtrd", "hecon", "heequb", "heev", "heevd", "heevr",
+        "heevx", "hegst", "hegv", "hegvd", "hegvx", "herfs", "herfsx", "hesv", "hesvx", "hesvxx", "hetrd", "hetrf", "hetri",
+        "hetrs", "hfrk", "hgeqz", "hpcon", "hpev", "hpevd", "hpevx", "hpgst", "hpgv", "hpgvd", "hpgvx", "hprfs", "hpsv",
+        "hpsvx", "hptrd", "hptrf", "hptri", "hptrs", "hsein", "hseqr", "pbcon", "pbequ", "pbrfs", "pbstf", "pbsv", "pbsvx",
+        "pbtrf", "pbtrs", "pftrf", "pftri", "pftrs", "pocon", "poequ", "poequb", "porfs", "porfsx", "posv", "posvx", "posvxx",
+        "potrf", "potri", "potrs", "ppcon", "ppequ", "pprfs", "ppsv", "ppsvx", "pptrf", "pptri", "pptrs", "pstrf", "ptcon",
+        "pteqr", "ptrfs", "ptsv", "ptsvx", "pttrf", "pttrs", "spcon", "sprfs", "spsv", "spsvx", "sptrf", "sptri", "sptrs", "stedc",
+        "stegr", "stein", "stemr", "steqr", "sycon", "syequb", "syrfs", "syrfsx", "sysv", "sysvx", "sysvxx", "sytrf", "sytri",
+        "sytrs", "tbcon", "tbrfs", "tbtrs", "tfsm", "tftri", "tfttp", "tfttr", "tgevc", "tgexc", "tgsen", "tgsja", "tgsna", "tgsyl",
+        "tpcon", "tprfs", "tptri", "tptrs", "tpttf", "tpttr", "trcon", "trevc", "trexc", "trrfs", "trsen", "trsna", "trsyl", "trtri",
+        "trtrs", "trttf", "trttp", "tzrzf", "ungbr", "unghr", "unglq", "ungql", "ungqr", "ungrq", "ungtr", "unmbr", "unmhr",
+        "unmlq", "unmql", "unmqr", "unmrq", "unmrz", "unmtr", "upgtr", "upmtr"
+    ],
+    "other": [
+        "icamax", "idamax", "isamax", "izamax",
+        "scasum", "scnrm2", "dzasum", "dznrm2", "sdsdot",
+        "csrot", "zdrot", "csscal", "zdscal",
+
+        "sgesv", "sposv", "ilaenv"
+    ]
+}

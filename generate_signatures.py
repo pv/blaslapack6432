@@ -10,8 +10,7 @@ the unpacked directories.
 
 """
 
-import os
-import io
+import re
 import sys
 import glob
 import json
@@ -49,13 +48,16 @@ def main():
     blas_f_filenames = glob.glob(str(blas_dir / "*.f"))
     lapack_f_filenames = glob.glob(str(lapack_dir / "SRC" / "*.f"))
 
+    names = load_include("include.json")
+
     multiprocessing.set_start_method("spawn")
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
         filenames = sorted(blas_f_filenames + lapack_f_filenames)
         for infos in pool.imap_unordered(process_fortran, filenames):
             # for infos in map(process_fortran, filenames):
             for info in infos:
-                signatures[info["name"]] = info
+                if info["name"] in names:
+                    signatures[info["name"]] = info
 
     with open("signatures.json", "w") as f:
         json.dump(signatures, f, indent=2, allow_nan=False, sort_keys=True)
@@ -63,6 +65,21 @@ def main():
 
 def process_fortran(filename):
     infos = []
+
+    # read comments to obtain dimension information
+    dimension_info = {}
+    with open(filename, "r") as f:
+        text = f.read()
+        for line in text.splitlines():
+            m = re.match(
+                r"^\*>\s+([A-Z]+) is INTEGER array, dimension \((.+)\)\.?\s*$",
+                line,
+                flags=re.I,
+            )
+            if m:
+                dimension_info[m.group(1).lower()] = m.group(2).lower()
+
+    # parse with f2py
     for info in crackfortran(filename):
         # Drop unnecessary info
         for kw in ["body", "entry", "externals", "from", "interfaced"]:
@@ -83,9 +100,33 @@ def process_fortran(filename):
                     varinfo["dimension"] = ["liwork"]
                     continue
 
+                if varname in dimension_info:
+                    varinfo["dimension"] = [dimension_info[varname]]
+
+                if "ld" + varname in info["vars"]:
+                    varinfo["dimension"] = ["ld" + varname]
+                    continue
+
         infos.append(info)
 
     return infos
+
+
+def load_include(fn):
+    with open(fn, "r") as f:
+        include = json.load(f)
+
+    names = include["other"]
+
+    for part in include["sd"]:
+        names.append("s" + part)
+        names.append("d" + part)
+
+    for part in include["cz"]:
+        names.append("c" + part)
+        names.append("z" + part)
+
+    return names
 
 
 if __name__ == "__main__":
