@@ -82,7 +82,7 @@ def process_fortran(filename):
     # parse with f2py
     for info in crackfortran(filename):
         # Drop unnecessary info
-        for kw in ["body", "entry", "externals", "from", "interfaced"]:
+        for kw in ["body", "entry", "externals", "from", "interfaced", "sortvars"]:
             info.pop(kw, None)
         for varname, varinfo in info["vars"].items():
             for kw in ["check", "depend", "=", "attrspec"]:

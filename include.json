@@ -49,6 +49,6 @@
         "scasum", "scnrm2", "dzasum", "dznrm2", "sdsdot",
         "csrot", "zdrot", "csscal", "zdscal",
 
-        "sgesv", "sposv", "ilaenv"
+        "ilaenv"
     ]
 }
