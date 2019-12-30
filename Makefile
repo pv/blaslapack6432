@@ -2,7 +2,7 @@ PYTHON=python3
 FC=gfortran -fPIC
 FOPT=-Os -g0
 CC=gcc -fPIC
-OPT=-Os -g0 -Wall -Werror -std=c89
+OPT=-Os -g0 -Wall -Werror -std=c99 -pedantic
 
 SRC_PREFIX=
 SRC_SUFFIX=64_

@@ -29,7 +29,7 @@ class UserError(Exception):
 def main():
     parser = argparse.ArgumentParser(usage=__doc__.strip())
     parser.add_argument("lapack_dir", type=pathlib.Path, help="LAPACK source directory")
-    parser.add_argument("--no-parallel")
+    parser.add_argument("--no-parallel", action="store_true")
     args = parser.parse_args()
 
     lapack_dir = args.lapack_dir
@@ -83,6 +83,7 @@ def process_fortran(filename):
 
     # read comments to obtain dimension information
     dimension_info = {}
+    intent_info = {}
     with open(filename, "r") as f:
         text = f.read()
         for line in text.splitlines():
@@ -127,6 +128,12 @@ def process_fortran(filename):
             if m:
                 dimension_info[m.group(1).lower()] = ("var", m.group(2).lower())
 
+            m = re.match(
+                r"^\*>\s+\\param\[(in|out|in,out)\]\s+([A-Z]+)\s*$", line, flags=re.I,
+            )
+            if m:
+                intent_info[m.group(2).lower()] = m.group(1).split(",")
+
     # parse with f2py
     for info in crackfortran(filename):
         # Drop unnecessary info
@@ -154,6 +161,9 @@ def process_fortran(filename):
 
                 if dt == "mulmin" and di[1] in info["vars"] and di[2] in info["vars"]:
                     varinfo["dimension"] = [{"mulmin": di}]
+
+            if varname in intent_info:
+                varinfo["intent"] = intent_info[varname]
 
         infos.append(info)
 

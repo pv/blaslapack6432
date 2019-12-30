@@ -8,9 +8,6 @@ Full LAPACK wrapper coverage does not appear reasonable to provide, because not
 all IWORK array sizes are easily known at the interface level, and can depend
 on LAPACK internals.
 
-The wrappers generally also write to all integer input variables, which may
-limit some use cases.
-
 
 Usage
 -----
