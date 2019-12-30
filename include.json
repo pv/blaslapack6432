@@ -6,7 +6,7 @@
         "tbsv", "tpmv", "tpsv", "trmm", "trmv", "trsm", "trsv",
 
         "## LAPACK",
-        "getf2", "getrf", "getrs", "lauu2", "lauum", "potf2", "potrf", "trti2", "trtri", "trtrs", "lacon"
+        "getf2", "getrf", "getrs", "lauu2", "lauum", "potf2", "potrf", "trti2", "trtri", "trtrs", "lacon", "gesdd"
     ],
 
     "cz": [
@@ -16,7 +16,7 @@
         "tpsv", "trmm", "trmv", "trsm", "trsv",
 
         "## LAPACK",
-        "getf2", "getrf", "getrs", "lauu2", "lauum", "potf2", "potrf", "trti2", "trtri", "trtrs", "lacon"
+        "getf2", "getrf", "getrs", "lauu2", "lauum", "potf2", "potrf", "trti2", "trtri", "trtrs", "lacon", "gesdd"
     ],
 
     "other": [
