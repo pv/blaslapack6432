@@ -1,12 +1,11 @@
 # -*- mode:python; coding: utf-8; eval: (blacken-mode) -*-
-"""generate_signatures.py blas_dir lapack_dir
+"""generate_signatures.py lapack_dir
 
 Generate signature file `signatures.json` from reference BLAS and
 LAPACK sources.
 
-Download and unpack reference Fortran BLAS (http://netlib.org/blas)
-and LAPACK (http://netlib.org/blas) sources, and point this script to
-the unpacked directories.
+Download and unpack reference LAPACK (http://netlib.org/blas) sources,
+and point this script to the unpacked directory.
 
 """
 
@@ -19,7 +18,8 @@ import argparse
 import multiprocessing
 
 from numpy.f2py.crackfortran import crackfortran
-from numpy.f2py import auxfuncs, cfuncs, f2py2e
+
+from generate import load_include
 
 
 class UserError(Exception):
@@ -28,12 +28,12 @@ class UserError(Exception):
 
 def main():
     parser = argparse.ArgumentParser(usage=__doc__.strip())
-    parser.add_argument("blas_dir", type=pathlib.Path, help="BLAS source directory")
     parser.add_argument("lapack_dir", type=pathlib.Path, help="LAPACK source directory")
+    parser.add_argument("--no-parallel")
     args = parser.parse_args()
 
-    blas_dir = args.blas_dir
     lapack_dir = args.lapack_dir
+    blas_dir = args.lapack_dir / "BLAS" / "SRC"
 
     if not (blas_dir / "daxpy.f").exists():
         raise UserError("{} is not a reference BLAS source directory".format(blas_dir))
@@ -43,21 +43,36 @@ def main():
             "{} is not a reference LAPACK source directory".format(lapack_dir)
         )
 
+    names = load_include("include.json")
+
     signatures = {}
 
     blas_f_filenames = glob.glob(str(blas_dir / "*.f"))
     lapack_f_filenames = glob.glob(str(lapack_dir / "SRC" / "*.f"))
 
-    names = load_include("include.json")
+    filenames = sorted(blas_f_filenames + lapack_f_filenames)
 
-    multiprocessing.set_start_method("spawn")
-    with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
-        filenames = sorted(blas_f_filenames + lapack_f_filenames)
-        for infos in pool.imap_unordered(process_fortran, filenames):
-            # for infos in map(process_fortran, filenames):
+    if args.no_parallel:
+        pool = None
+        pool_map = map
+    else:
+        pool = multiprocessing.Pool(multiprocessing.cpu_count())
+        pool_map = pool.imap_unordered
+
+    skipped_files = set(filenames)
+
+    try:
+        for filename, infos in pool_map(process_fortran, filenames):
             for info in infos:
                 if info["name"] in names:
+                    if filename in skipped_files:
+                        skipped_files.remove(filename)
                     signatures[info["name"]] = info
+    finally:
+        if pool is not None:
+            pool.terminate()
+
+    signatures["skipped_files"] = sorted(skipped_files)
 
     with open("signatures.json", "w") as f:
         json.dump(signatures, f, indent=2, allow_nan=False, sort_keys=True)
@@ -72,12 +87,45 @@ def process_fortran(filename):
         text = f.read()
         for line in text.splitlines():
             m = re.match(
-                r"^\*>\s+([A-Z]+) is INTEGER array, dimension \((.+)\)\.?\s*$",
+                r"^\*>\s+([A-Z]+) is INTEGER array, dimension \(([A-Z]+)\)\.?\s*$",
                 line,
                 flags=re.I,
             )
             if m:
-                dimension_info[m.group(1).lower()] = m.group(2).lower()
+                dimension_info[m.group(1).lower()] = ("var", m.group(2).lower())
+
+            m = re.match(
+                r"^\*>\s+([A-Z]+) is INTEGER array, dimension \(min\(([A-Z]+),([A-Z]+)\)\)\.?\s*$",
+                line,
+                flags=re.I,
+            )
+            if m:
+                dimension_info[m.group(1).lower()] = (
+                    "min",
+                    m.group(2).lower(),
+                    m.group(3).lower(),
+                )
+
+            m = re.match(
+                r"^\*>\s+([A-Z]+) is INTEGER array, dimension \(([0-9]+)\*min\(([A-Z]+),([A-Z]+)\)\)\.?\s*$",
+                line,
+                flags=re.I,
+            )
+            if m:
+                dimension_info[m.group(1).lower()] = (
+                    "mulmin",
+                    int(m.group(2).lower()),
+                    m.group(3).lower(),
+                    m.group(4).lower(),
+                )
+
+            m = re.match(
+                r"^\*>\s+([A-Z]+) is INTEGER array, dimension \(max\(1,([A-Z]+)\)\)\.?\s*$",
+                line,
+                flags=re.I,
+            )
+            if m:
+                dimension_info[m.group(1).lower()] = ("var", m.group(2).lower())
 
     # parse with f2py
     for info in crackfortran(filename):
@@ -96,37 +144,20 @@ def process_fortran(filename):
             dims = varinfo.get("dimension", [])
 
             if dims == ["*"]:
-                if varname == "iwork" and "liwork" in info["vars"]:
-                    varinfo["dimension"] = ["liwork"]
-                    continue
+                dt, *di = dimension_info.get(varname, (None, None))
 
-                if varname in dimension_info:
-                    varinfo["dimension"] = [dimension_info[varname]]
+                if dt == "var" and di[0] in info["vars"]:
+                    varinfo["dimension"] = di
 
-                if "ld" + varname in info["vars"]:
-                    varinfo["dimension"] = ["ld" + varname]
-                    continue
+                if dt == "min" and di[0] in info["vars"] and di[1] in info["vars"]:
+                    varinfo["dimension"] = [{"min": di}]
+
+                if dt == "mulmin" and di[1] in info["vars"] and di[2] in info["vars"]:
+                    varinfo["dimension"] = [{"mulmin": di}]
 
         infos.append(info)
 
-    return infos
-
-
-def load_include(fn):
-    with open(fn, "r") as f:
-        include = json.load(f)
-
-    names = include["other"]
-
-    for part in include["sd"]:
-        names.append("s" + part)
-        names.append("d" + part)
-
-    for part in include["cz"]:
-        names.append("c" + part)
-        names.append("z" + part)
-
-    return names
+    return filename, infos
 
 
 if __name__ == "__main__":
