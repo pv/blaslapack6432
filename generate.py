@@ -188,7 +188,7 @@ def generate_code(item, prototype=False):
         if value_type == "min":
             return "MIN(*{0}, *{1})".format(*value)
         elif value_type == "mulmin":
-            return "{0} * (size_t)MIN(*{1}, *{2})".format(*value)
+            return "{0} * (int64_t)MIN(*{1}, *{2})".format(*value)
         else:
             raise ValueError("Unknown dimension value: {!r}".format(dim_info))
 
